@@ -1,26 +1,20 @@
 package com.moneytracker.controller;
 
-import com.moneytracker.model.Category;
-import com.moneytracker.repository.CategoryRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.moneytracker.dto.CategoryDto;
+import com.moneytracker.service.CategoryService;
+import lombok.AllArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/categories")
+@AllArgsConstructor
 public class CategoryController {
 
-  @Autowired
-  private CategoryRepository categoryRepository;
-
-  @GetMapping
-  public List<Category> getAllCategories() {
-    return categoryRepository.findAll();
-  }
+  private final CategoryService categoryService;
 
   @PostMapping
-  public Category createCategory(@RequestBody Category category) {
-    return categoryRepository.save(category);
+  public CategoryDto createCategory(@Validated @RequestBody CategoryDto category) {
+    return categoryService.addCategory(category.name());
   }
 }
