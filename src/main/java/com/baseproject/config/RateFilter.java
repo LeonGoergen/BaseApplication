@@ -27,9 +27,9 @@ public class RateFilter extends OncePerRequestFilter {
     this.objectMapper = objectMapper;
 
     Bandwidth bandwidth = BandwidthBuilder.builder()
-        .capacity(1)
-        .refillGreedy(1, Duration.ofSeconds(10))
-        .initialTokens(1)
+        .capacity(20)
+        .refillGreedy(1, Duration.ofSeconds(1))
+        .initialTokens(20)
         .build();
 
     this.bucket = Bucket.builder()

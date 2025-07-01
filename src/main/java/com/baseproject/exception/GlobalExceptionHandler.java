@@ -25,7 +25,7 @@ public class GlobalExceptionHandler {
 
     HttpStatus httpStatus = ex.getHttpStatus() != null ? ex.getHttpStatus() : HttpStatus.INTERNAL_SERVER_ERROR;
 
-    log.error(errorResponse);
+    logMessage(errorResponse, ex);
 
     return new ResponseEntity<>(errorResponse, httpStatus);
   }
@@ -39,10 +39,11 @@ public class GlobalExceptionHandler {
         ex.getMessage(),
         ex.getReference()
     );
+    logMessage(errorResponse, ex);
 
-    log.error(errorResponse);
+    HttpStatus httpStatus = ex.getHttpStatus() != null ? ex.getHttpStatus() : HttpStatus.BAD_REQUEST;
 
-    return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    return new ResponseEntity<>(errorResponse, httpStatus);
   }
 
   @ExceptionHandler(Exception.class)
@@ -53,8 +54,7 @@ public class GlobalExceptionHandler {
         UNKNOW_ERROR.getCode(),
         UNKNOW_ERROR.getMessage()
     );
-
-    log.error(errorResponse);
+    logMessage(errorResponse, ex);
 
     return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
   }
@@ -66,11 +66,32 @@ public class GlobalExceptionHandler {
         UNKNOW_ERROR.getCode(),
         UNKNOW_ERROR.getMessage()
     );
-
-    log.error("Unhandled exception: ", ex);
+    logMessage(errorResponse, ex);
 
     return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
   }
 
+  private void logMessage(ErrorResponseDto errorResponse, Exception ex) {
+    log.error(
+        "Exception occurred [timestamp: {}, code: {}, message: {}, reference: {}]: {}",
+        errorResponse.timestamp(),
+        errorResponse.code(),
+        errorResponse.message(),
+        errorResponse.reference(),
+        ex
+    );
+    log.error(ex.getMessage(), ex);
+  }
 
+  private void logMessage(ErrorResponseDto errorResponse, Throwable ex) {
+    log.error(
+        "Exception occurred [timestamp: {}, code: {}, message: {}, reference: {}]: {}",
+        errorResponse.timestamp(),
+        errorResponse.code(),
+        errorResponse.message(),
+        errorResponse.reference(),
+        ex
+    );
+    log.error(ex.getMessage(), ex);
+  }
 }
