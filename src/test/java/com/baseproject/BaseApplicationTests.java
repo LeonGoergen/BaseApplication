@@ -1,10 +1,10 @@
-package com.moneytracker;
+package com.baseproject;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class MoneyTrackerApplicationTests
+class BaseApplicationTests
 {
 
   @Test

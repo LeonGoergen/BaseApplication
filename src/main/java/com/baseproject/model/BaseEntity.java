@@ -1,4 +1,4 @@
-package com.moneytracker.util;
+package com.baseproject.model;
 
 import jakarta.persistence.*;
 import jakarta.persistence.Id;

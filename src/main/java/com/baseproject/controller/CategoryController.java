@@ -1,7 +1,7 @@
-package com.moneytracker.controller;
+package com.baseproject.controller;
 
-import com.moneytracker.dto.CategoryDto;
-import com.moneytracker.service.CategoryService;
+import com.baseproject.dto.CategoryDto;
+import com.baseproject.service.CategoryService;
 import lombok.AllArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;

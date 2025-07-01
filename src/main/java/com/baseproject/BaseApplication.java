@@ -1,4 +1,4 @@
-package com.moneytracker;
+package com.baseproject;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -6,12 +6,10 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 @SpringBootApplication
 @EnableJpaAuditing
-public class MoneyTrackerApplication
-{
+public class BaseApplication {
 
-  public static void main(String[] args)
-  {
-    SpringApplication.run(MoneyTrackerApplication.class, args);
+  public static void main(String[] args) {
+    SpringApplication.run(BaseApplication.class, args);
   }
 
 }

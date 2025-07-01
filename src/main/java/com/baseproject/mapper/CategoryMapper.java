@@ -1,7 +1,7 @@
-package com.moneytracker.mapper;
+package com.baseproject.mapper;
 
-import com.moneytracker.dto.CategoryDto;
-import com.moneytracker.model.Category;
+import com.baseproject.dto.CategoryDto;
+import com.baseproject.model.Category;
 import org.mapstruct.*;
 
 @Mapper(componentModel = "spring")

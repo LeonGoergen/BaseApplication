@@ -1,9 +1,9 @@
-package com.moneytracker.service;
+package com.baseproject.service;
 
-import com.moneytracker.dto.CategoryDto;
-import com.moneytracker.mapper.CategoryMapper;
-import com.moneytracker.model.Category;
-import com.moneytracker.repository.CategoryRepository;
+import com.baseproject.dto.CategoryDto;
+import com.baseproject.mapper.CategoryMapper;
+import com.baseproject.model.Category;
+import com.baseproject.repository.CategoryRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 

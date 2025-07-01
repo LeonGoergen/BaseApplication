@@ -1,4 +1,4 @@
-package com.moneytracker.dto;
+package com.baseproject.dto;
 
 import jakarta.validation.constraints.NotBlank;
 

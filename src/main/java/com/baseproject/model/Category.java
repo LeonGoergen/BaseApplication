@@ -1,6 +1,5 @@
-package com.moneytracker.model;
+package com.baseproject.model;
 
-import com.moneytracker.util.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.Accessors;

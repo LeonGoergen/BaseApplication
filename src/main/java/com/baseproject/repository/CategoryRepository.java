@@ -1,6 +1,6 @@
-package com.moneytracker.repository;
+package com.baseproject.repository;
 
-import com.moneytracker.model.Category;
+import com.baseproject.model.Category;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
