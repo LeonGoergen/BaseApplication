@@ -18,5 +18,19 @@ public class AuthConfig {
   public PasswordEncoder passwordEncoder() {
     return new BCryptPasswordEncoder();
   }
+
+//  @Bean
+//  public WebMvcConfigurer corsConfigurer() {
+//    return new WebMvcConfigurer() {
+//      @Override
+//      public void addCorsMappings(@NonNull CorsRegistry registry) {
+//        registry.addMapping("/**")
+//            //.allowedOrigins("https://your-frontend.com")
+//            .allowedMethods("GET", "POST", "PUT", "DELETE")
+//            .allowCredentials(true);
+//      }
+//    };
+//  }
+
 }
 
