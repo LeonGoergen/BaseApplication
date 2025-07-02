@@ -6,21 +6,40 @@ import com.baseproject.mapper.UserMapper;
 import com.baseproject.model.User;
 import com.baseproject.model.enums.UserRoleEnum;
 import com.baseproject.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 
 @Service
 @AllArgsConstructor
+@Log4j2
 public class UserService {
 
   private final UserRepository userRepository;
   private final UserMapper userMapper;
   private final PasswordEncoder passwordEncoder;
 
+  public User findByUsername(String username) throws ValidationException {
+    return userRepository.findByUsername(username)
+        .orElseThrow(() -> new ValidationException(ExceptionEnum.USER_NOT_FOUND)
+            .setHttpStatus(HttpStatus.NOT_FOUND)
+            .setReference("User with username " + username + " not found"));
+  }
+
+  public UserDto findDtoByUsername(String username) throws ValidationException {
+    User user = findByUsername(username);
+    return userMapper.toDto(user);
+  }
+
+  @Transactional
   public UserDto save(UserCreateDto userDto) {
+    log.info("Saving user: {}", userDto.username());
+
     User user = userMapper.toEntity(userDto);
     user.setRoles(Set.of(UserRoleEnum.USER));
     user.setPassword(passwordEncoder.encode(userDto.password()));
@@ -36,6 +55,10 @@ public class UserService {
           .setHttpStatus(HttpStatus.CONFLICT);
     }
 
-    return userMapper.toDto(userRepository.save(user));
+    User savedUser = userRepository.save(user);
+
+    log.info("User saved successfully: {}", savedUser.getUsername());
+
+    return userMapper.toDto(savedUser);
   }
 }

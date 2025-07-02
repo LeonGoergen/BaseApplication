@@ -1,8 +1,9 @@
 package com.baseproject.dto;
 
+import com.baseproject.model.enums.UserRoleEnum;
 import lombok.NonNull;
 
-import java.util.UUID;
+import java.util.*;
 
 public record UserDto(
     @NonNull UUID id,
@@ -15,5 +16,6 @@ public record UserDto(
     String city,
     String country,
     String postalCode,
-    @NonNull Boolean active
+    @NonNull Boolean active,
+    @NonNull Set<UserRoleEnum> roles
 ) {}
