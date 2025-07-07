@@ -2,9 +2,12 @@ package com.baseproject.service;
 
 import com.baseproject.dto.*;
 import com.baseproject.exception.*;
+import com.baseproject.mapper.UserMapper;
+import com.baseproject.model.User;
 import jakarta.servlet.http.*;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.*;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
@@ -16,11 +19,12 @@ import java.time.*;
 
 @Service
 @AllArgsConstructor
-@Log4j2
+@Slf4j
 public class AuthService {
 
   private final AuthenticationManager authenticationManager;
   private final UserService userService;
+  private final UserMapper userMapper;
 
   public UserDto login(LoginRequestDto requestDto, HttpServletRequest httpRequest) {
     try {
@@ -35,17 +39,18 @@ public class AuthService {
           HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,
           SecurityContextHolder.getContext()
       );
-
-    } catch (BadCredentialsException e) {
+    } catch (Exception e) {
+      log.warn("Invalid credentials for user: {}", requestDto.username(), e);
       throw new ValidationException(ExceptionEnum.INVALID_CREDENTIALS)
           .setHttpStatus(HttpStatus.UNAUTHORIZED);
     }
 
-    UserDto user = userService.findDtoByUsername(requestDto.username());
+    User user = userService.findByUsername(requestDto.username());
+    userService.updateLastActiveTime(user);
 
     log.info("User {} logged in successfully", requestDto.username());
 
-    return user;
+    return userMapper.toDto(user);
   }
 
   public MessageDto logout(HttpServletRequest request)

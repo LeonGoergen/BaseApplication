@@ -30,10 +30,9 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.boot:spring-boot-starter-security'
 
-    //mapstruct
     implementation 'org.mapstruct:mapstruct:1.6.3'
-
     implementation 'com.bucket4j:bucket4j-core:8.7.0'
+    implementation 'org.hibernate:hibernate-envers:7.0.5.Final'
 
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'com.mysql:mysql-connector-j'

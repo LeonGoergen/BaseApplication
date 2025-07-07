@@ -5,6 +5,7 @@ import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import lombok.NonNull;
 import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -13,7 +14,7 @@ import org.springframework.web.util.*;
 import java.io.*;
 
 @Service
-@Log4j2
+@Slf4j
 public class LoggingFilter extends OncePerRequestFilter {
 
   private final ObjectMapper objectMapper = new ObjectMapper();

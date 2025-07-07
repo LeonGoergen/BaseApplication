@@ -4,7 +4,9 @@ import com.baseproject.model.enums.UserRoleEnum;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.Accessors;
+import org.hibernate.envers.Audited;
 
+import java.time.LocalDateTime;
 import java.util.Set;
 
 @Entity
@@ -12,6 +14,7 @@ import java.util.Set;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Accessors(chain = true)
+@Audited
 public class User extends BaseEntity  {
 
   @Column(name = "username", nullable = false, unique = true)
@@ -52,4 +55,7 @@ public class User extends BaseEntity  {
   @Column(name = "role")
   @Enumerated(EnumType.STRING)
   private Set<UserRoleEnum> roles;
+
+  @Column(name = "last_active_date_time")
+  private LocalDateTime lastActiveDateTime;
 }

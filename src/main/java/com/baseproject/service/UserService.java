@@ -8,16 +8,17 @@ import com.baseproject.model.enums.UserRoleEnum;
 import com.baseproject.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
 @AllArgsConstructor
-@Log4j2
+@Slf4j
 public class UserService {
 
   private final UserRepository userRepository;
@@ -41,7 +42,7 @@ public class UserService {
     log.info("Saving user: {}", userDto.username());
 
     User user = userMapper.toEntity(userDto);
-    user.setRoles(Set.of(UserRoleEnum.USER));
+    user.setRoles(Set.of(UserRoleEnum.GUEST));
     user.setPassword(passwordEncoder.encode(userDto.password()));
     user.setIsActive(true);
 
@@ -60,5 +61,11 @@ public class UserService {
     log.info("User saved successfully: {}", savedUser.getUsername());
 
     return userMapper.toDto(savedUser);
+  }
+
+  @Transactional
+  public void updateLastActiveTime(User user) {
+    user.setLastActiveDateTime(LocalDateTime.now());
+    userRepository.save(user);
   }
 }
