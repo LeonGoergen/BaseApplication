@@ -4,7 +4,7 @@ import com.baseproject.model.enums.UserRoleEnum;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.Accessors;
-import org.hibernate.envers.Audited;
+import org.hibernate.envers.*;
 
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -56,6 +56,7 @@ public class User extends BaseEntity  {
   @Enumerated(EnumType.STRING)
   private Set<UserRoleEnum> roles;
 
+  @NotAudited
   @Column(name = "last_active_date_time")
   private LocalDateTime lastActiveDateTime;
 }

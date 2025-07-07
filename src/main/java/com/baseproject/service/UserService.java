@@ -38,13 +38,20 @@ public class UserService {
   }
 
   @Transactional
-  public UserDto save(UserCreateDto userDto) {
-    log.info("Saving user: {}", userDto.username());
+  public User save(User user) {
+    log.info("Saving user: {}", user.getUsername());
+    return userRepository.save(user);
+  }
+
+  @Transactional
+  public UserDto createUser(UserCreateDto userDto) {
+    log.info("Creating user: {}", userDto.username());
 
     User user = userMapper.toEntity(userDto);
     user.setRoles(Set.of(UserRoleEnum.GUEST));
     user.setPassword(passwordEncoder.encode(userDto.password()));
     user.setIsActive(true);
+    user.setLastActiveDateTime(LocalDateTime.now());
 
     if (userRepository.findByUsername(user.getUsername()).isPresent()) {
       throw new ValidationException(ExceptionEnum.USERNAME_ALREADY_EXISTS)
@@ -67,5 +74,33 @@ public class UserService {
   public void updateLastActiveTime(User user) {
     user.setLastActiveDateTime(LocalDateTime.now());
     userRepository.save(user);
+  }
+
+  @Transactional
+  public List<User> findInactiveUsers(LocalDateTime lastActiveThreshold) {
+    log.info("Finding users inactive since: {}", lastActiveThreshold);
+    List<User> inactiveUsers = userRepository.findByLastActiveDateTimeBeforeAndIsActiveTrue(lastActiveThreshold);
+
+    if (inactiveUsers.isEmpty()) {
+      log.info("No inactive users found to deactivate");
+      return Collections.emptyList();
+    }
+
+    log.info("Found {} inactive users", inactiveUsers.size());
+    return inactiveUsers;
+  }
+
+  @Transactional
+  public List<User> findUsersToDelete(LocalDateTime lastActiveThreshold) {
+    log.info("Finding deactivated users since: {}", lastActiveThreshold);
+    List<User> usersToDelete = userRepository.findByLastActiveDateTimeBefore(lastActiveThreshold);
+
+    if (usersToDelete.isEmpty()) {
+      log.info("No users found to delete");
+      return Collections.emptyList();
+    }
+
+    log.info("Found {} users to delete", usersToDelete.size());
+    return usersToDelete;
   }
 }
