@@ -10,8 +10,6 @@ import java.util.*;
 @Repository
 public interface UserRepository extends JpaRepository<User, UUID>
 {
-  Optional<User> findByUsername(String username);
-
   Optional<User> findByEmail(String email);
 
   List<User> findByLastActiveDateTimeBeforeAndIsActive(LocalDateTime lastActiveDateTime, boolean isActive);

@@ -17,9 +17,6 @@ import java.util.Set;
 @Audited
 public class User extends BaseEntity  {
 
-  @Column(name = "username", nullable = false, unique = true)
-  private String username;
-
   @Column(name = "email", nullable = false, unique = true)
   private String email;
 
@@ -47,14 +44,17 @@ public class User extends BaseEntity  {
   @Column(name = "postal_code")
   private String postalCode;
 
-  @Column(name = "is_active", nullable = false)
-  private Boolean isActive;
+  @Column(name = "is_verified", nullable = false)
+  private Boolean isVerified;
 
   @ElementCollection(fetch = FetchType.EAGER)
   @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
   @Column(name = "role")
   @Enumerated(EnumType.STRING)
   private Set<UserRoleEnum> roles;
+
+  @Column(name = "is_active", nullable = false)
+  private Boolean isActive;
 
   @NotAudited
   @Column(name = "last_active_date_time")

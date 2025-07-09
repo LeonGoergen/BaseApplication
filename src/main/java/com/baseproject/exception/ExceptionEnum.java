@@ -13,7 +13,6 @@ public enum ExceptionEnum {
   USER_NOT_FOUND("E002", "User not found"),
   SESSION_NOT_FOUND("E005", "Session not found"),
 
-  USERNAME_ALREADY_EXISTS("E003", "Username already exists"),
   EMAIL_ALREADY_EXISTS("E004", "Email already exists"),
 
   MAIL_SERVICE_NOT_AVAILABLE("E005", "Mail service is not available"),

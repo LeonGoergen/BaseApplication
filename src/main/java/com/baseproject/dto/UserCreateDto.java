@@ -3,9 +3,8 @@ package com.baseproject.dto;
 import lombok.NonNull;
 
 public record UserCreateDto(
-    @NonNull String username,
-    @NonNull String password,
     @NonNull String email,
+    @NonNull String password,
     @NonNull String firstName,
     @NonNull String lastName,
     @NonNull String phoneNumber,

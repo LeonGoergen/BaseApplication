@@ -14,11 +14,11 @@ public class BaseUserDetailsService implements UserDetailsService
   private final UserService userService;
 
   @Override
-  public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-    User user = userService.findByUsername(username);
+  public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+    User user = userService.findByEmail(email);
 
     return new org.springframework.security.core.userdetails.User(
-        user.getUsername(),
+        user.getEmail(),
         user.getPassword(),
         user.getRoles().stream()
             .map(role -> new SimpleGrantedAuthority("ROLE_" + role.name()))

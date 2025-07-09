@@ -7,7 +7,6 @@ import java.util.*;
 
 public record UserDto(
     @NonNull UUID id,
-    @NonNull String username,
     @NonNull String email,
     @NonNull String firstName,
     @NonNull String lastName,
@@ -17,5 +16,6 @@ public record UserDto(
     String country,
     String postalCode,
     @NonNull Boolean active,
+    @NonNull Boolean verified,
     @NonNull Set<UserRoleEnum> roles
 ) {}

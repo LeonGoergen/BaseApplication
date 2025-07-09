@@ -27,16 +27,11 @@ public class UserService {
 
   private final MailService mailService;
 
-  public User findByUsername(String username) throws ValidationException {
-    return userRepository.findByUsername(username)
+  public User findByEmail(String email) throws ValidationException {
+    return userRepository.findByEmail(email)
         .orElseThrow(() -> new ValidationException(ExceptionEnum.USER_NOT_FOUND)
             .setHttpStatus(HttpStatus.NOT_FOUND)
-            .setReference("User with username " + username + " not found"));
-  }
-
-  public UserDto findDtoByUsername(String username) throws ValidationException {
-    User user = findByUsername(username);
-    return userMapper.toDto(user);
+            .setReference("User " + email + " not found"));
   }
 
   @Transactional
@@ -51,7 +46,7 @@ public class UserService {
 
   @Transactional
   public UserDto createUser(UserCreateDto userDto) {
-    log.info("Creating user: {}", userDto.username());
+    log.info("Creating user: {}", userDto.email());
 
     User user = userMapper.toEntity(userDto);
     user.setRoles(Set.of(UserRoleEnum.GUEST));
@@ -59,12 +54,7 @@ public class UserService {
     user.setIsActive(true);
     user.setLastActiveDateTime(LocalDateTime.now());
 
-    if (userRepository.findByUsername(user.getUsername()).isPresent()) {
-      throw new ValidationException(ExceptionEnum.USERNAME_ALREADY_EXISTS)
-          .setHttpStatus(HttpStatus.CONFLICT);
-    }
-
-    if (userRepository.findByEmail(user.getUsername()).isPresent()) {
+    if (userRepository.findByEmail(user.getEmail()).isPresent()) {
       throw new ValidationException(ExceptionEnum.EMAIL_ALREADY_EXISTS)
           .setHttpStatus(HttpStatus.CONFLICT);
     }
@@ -73,7 +63,7 @@ public class UserService {
 
     mailService.sendRegistrationMail(savedUser.getEmail(), savedUser.getFirstName(), "https://youtube.com");
 
-    log.info("User saved successfully: {}", savedUser.getUsername());
+    log.info("User saved successfully: {}", savedUser.getId());
 
     return userMapper.toDto(savedUser);
   }

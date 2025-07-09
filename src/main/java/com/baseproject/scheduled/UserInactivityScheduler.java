@@ -66,7 +66,7 @@ public class UserInactivityScheduler implements SchedulingConfigurer {
     for (User user : usersToDeactivate) {
       user.setIsActive(false);
       userService.save(user);
-      log.info("User {} has been deactivated due to inactivity", user.getUsername());
+      log.info("User {} has been deactivated due to inactivity", user.getId());
     }
   }
 
@@ -79,7 +79,7 @@ public class UserInactivityScheduler implements SchedulingConfigurer {
 
     for (User user : usersToDelete) {
       userService.delete(user);
-      log.info("User {} has been deleted due to inactivity for more than two years", user.getUsername());
+      log.info("User {} has been deleted due to inactivity for more than two years", user.getId());
     }
   }
 }

@@ -1,7 +1,7 @@
 package com.baseproject.dto;
 
 public record LoginRequestDto(
-    String username,
+    String email,
     String password
 ) { }
 

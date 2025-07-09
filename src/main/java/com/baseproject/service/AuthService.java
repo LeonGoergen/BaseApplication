@@ -6,7 +6,6 @@ import com.baseproject.mapper.UserMapper;
 import com.baseproject.model.User;
 import jakarta.servlet.http.*;
 import lombok.AllArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.*;
 import org.springframework.security.authentication.*;
@@ -29,7 +28,7 @@ public class AuthService {
   public UserDto login(LoginRequestDto requestDto, HttpServletRequest httpRequest) {
     try {
       Authentication authentication = authenticationManager.authenticate(
-          new UsernamePasswordAuthenticationToken(requestDto.username(), requestDto.password())
+          new UsernamePasswordAuthenticationToken(requestDto.email(), requestDto.password())
       );
 
       SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -40,15 +39,15 @@ public class AuthService {
           SecurityContextHolder.getContext()
       );
     } catch (Exception e) {
-      log.warn("Invalid credentials for user: {}", requestDto.username(), e);
+      log.warn("Invalid credentials for user: {}", requestDto.email(), e);
       throw new ValidationException(ExceptionEnum.INVALID_CREDENTIALS)
           .setHttpStatus(HttpStatus.UNAUTHORIZED);
     }
 
-    User user = userService.findByUsername(requestDto.username());
+    User user = userService.findByEmail(requestDto.email());
     userService.updateLastActiveTime(user);
 
-    log.info("User {} logged in successfully", requestDto.username());
+    log.info("User {} logged in successfully", user.getId());
 
     return userMapper.toDto(user);
   }
