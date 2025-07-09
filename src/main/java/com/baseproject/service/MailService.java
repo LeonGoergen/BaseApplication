@@ -13,7 +13,10 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
 import java.io.UnsupportedEncodingException;
+import java.time.LocalDate;
 import java.util.UUID;
+
+import static com.baseproject.util.DateParser.parseLocalDateToString;
 
 @Slf4j
 @Service
@@ -40,6 +43,27 @@ public class MailService {
 
     String htmlContent = templateEngine.process("registration-template.html", context);
     sendMail(to, "Registration Confirmation", htmlContent);
+  }
+
+  @Async
+  public void sendInactivityWarningMail(String to, String name) {
+    Context context = new Context();
+    context.setVariable("name", name);
+    context.setVariable("loginUrl", applicationDomain + "public/auth/login");
+
+    String htmlContent = templateEngine.process("inactivity-warning-template.html", context);
+    sendMail(to, "Inactivity Warning", htmlContent);
+  }
+
+  @Async
+  public void sendDeletionWarningMail(String to, String name, LocalDate date) {
+    Context context = new Context();
+    context.setVariable("name", name);
+    context.setVariable("deletionDate", parseLocalDateToString(date));
+    context.setVariable("loginUrl", applicationDomain + "public/auth/login");
+
+    String htmlContent = templateEngine.process("deletion-warning-template.html", context);
+    sendMail(to, "Account Deletion Warning", htmlContent);
   }
 
   private void sendMail(String to, String subject, String htmlContent) {

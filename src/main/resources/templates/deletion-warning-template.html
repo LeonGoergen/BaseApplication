@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Konto wird gelöscht</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #fff4f4;
+            color: #333;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: #ffffff;
+            padding: 30px;
+            max-width: 600px;
+            margin: auto;
+            border: 2px solid #e74c3c;
+            border-radius: 8px;
+        }
+
+        h2 {
+            color: #e74c3c;
+        }
+
+        .button {
+            display: inline-block;
+            background-color: #e74c3c;
+            color: #fff !important;
+            padding: 12px 20px;
+            margin-top: 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        footer {
+            font-size: 12px;
+            text-align: center;
+            margin-top: 30px;
+            color: #777;
+        }
+
+        footer a {
+            color: #e74c3c;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Wichtige Mitteilung, <span th:text="${name}">Name</span></h2>
+
+    <p>Ihr <strong>MyApp</strong>-Konto war seit über einem Jahr inaktiv.</p>
+
+    <p>Gemäß unseren Nutzungsbedingungen werden inaktive Konten dauerhaft gelöscht, um Datenschutz und Systemhygiene zu gewährleisten.</p>
+
+    <p><strong>Ihr Konto wird am <span th:text="${deletionDate}">01.01.2025</span> gelöscht.</strong></p>
+
+    <p>Wenn Sie Ihr Konto behalten möchten, melden Sie sich bitte vorher an:</p>
+
+    <a th:href="@{${loginUrl}}" class="button">Jetzt zurückkehren</a>
+
+    <p>Falls Sie keine weiteren Aktionen unternehmen, wird Ihr Konto inklusive aller Daten unwiderruflich entfernt.</p>
+
+    <p>Bei Fragen steht unser Support-Team gerne zur Verfügung.</p>
+
+    <p>Mit freundlichen Grüßen, <br><strong>MyApp</strong></p>
+
+    <footer>
+        <p>Impressum: <a href="https://www.example.com/impressum">www.example.com/impressum</a></p>
+        <p>Datenschutz: <a href="https://www.example.com/datenschutz">www.example.com/datenschutz</a></p>
+        <p>Kontakt: <a href="mailto:support@example.com">support@example.com</a></p>
+    </footer>
+</div>
+</body>
+</html>

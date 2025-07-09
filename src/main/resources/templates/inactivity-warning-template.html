@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Wir vermissen Sie!</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            color: #333;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            max-width: 600px;
+            margin: auto;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.05);
+        }
+
+        h2 {
+            color: #2c3e50;
+        }
+
+        .button {
+            display: inline-block;
+            background-color: #3498db;
+            color: #fff !important;
+            padding: 12px 20px;
+            margin-top: 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        footer {
+            font-size: 12px;
+            text-align: center;
+            margin-top: 30px;
+            color: #777;
+        }
+
+        footer a {
+            color: #3498db;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Hallo <span th:text="${name}">Name</span>,</h2>
+
+    <p>wir haben festgestellt, dass Sie seit über einem Jahr nicht mehr bei <strong>MyApp</strong> aktiv waren. Wir vermissen Sie!</p>
+
+    <p>Es hat sich viel getan – neue Funktionen, Verbesserungen und spannende Inhalte warten auf Sie.</p>
+
+    <p>Klicken Sie einfach unten, um sich wieder anzumelden:</p>
+
+    <a th:href="@{${loginUrl}}" class="button">Jetzt zurückkehren</a>
+
+    <p>Wenn Sie weiterhin inaktiv bleiben, behalten wir uns vor, Ihr Konto gemäß unserer Richtlinie zu löschen.</p>
+
+    <p>Wir hoffen, Sie bald wiederzusehen!</p>
+    <p>Ihr <strong>MyApp</strong>-Team</p>
+
+    <footer>
+        <p>Impressum: <a href="https://www.example.com/impressum">www.example.com/impressum</a></p>
+        <p>Datenschutz: <a href="https://www.example.com/datenschutz">www.example.com/datenschutz</a></p>
+        <p>Kontakt: <a href="mailto:support@example.com">support@example.com</a></p>
+    </footer>
+</div>
+</body>
+</html>

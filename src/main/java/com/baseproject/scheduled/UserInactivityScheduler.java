@@ -2,7 +2,7 @@ package com.baseproject.scheduled;
 
 import com.baseproject.exception.BaseException;
 import com.baseproject.model.User;
-import com.baseproject.service.UserService;
+import com.baseproject.service.*;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.*;
@@ -23,17 +23,22 @@ public class UserInactivityScheduler implements SchedulingConfigurer {
   private final Integer inactivityThresholdDays;
   private final Integer deletionThresholdDays;
   private final UserService userService;
+  private final MailService mailService;
+
+  private final static Integer WARNING_DAYS_BEFORE_DELETION = 7;
 
   public UserInactivityScheduler(
       @Value("${scheduler.user.user-inactivity-check-interval:0 0 0 * * ?}") String inactivityCheckInterval,
       @Value("${scheduler.user.user-deactivation-days:365}") Integer inactivityThresholdDays,
       @Value("${scheduler.user.user-delete-days:730}") Integer deletionThresholdDays,
-      UserService userService
+      UserService userService,
+      MailService mailService
   ) {
     this.inactivityCheckInterval = inactivityCheckInterval;
     this.inactivityThresholdDays = inactivityThresholdDays;
     this.deletionThresholdDays = deletionThresholdDays;
     this.userService = userService;
+    this.mailService = mailService;
   }
 
   @Override
@@ -66,7 +71,21 @@ public class UserInactivityScheduler implements SchedulingConfigurer {
     for (User user : usersToDeactivate) {
       user.setIsActive(false);
       userService.save(user);
+      mailService.sendInactivityWarningMail(user.getEmail(), user.getFirstName());
       log.info("User {} has been deactivated due to inactivity", user.getId());
+    }
+  }
+
+  private void warnInactiveUsers()
+  {
+    LocalDateTime threshold = LocalDateTime.now().minusDays(deletionThresholdDays - WARNING_DAYS_BEFORE_DELETION);
+    List<User> usersToWarn = userService.findWithLastActiveDateBefore(threshold, false);
+
+    log.info("Found {} users to warn about inactivity", usersToWarn.size());
+
+    for (User user : usersToWarn) {
+      mailService.sendDeletionWarningMail(user.getEmail(), user.getFirstName(), threshold.plusDays(WARNING_DAYS_BEFORE_DELETION).toLocalDate());
+      log.info("Warning email sent to user {}", user.getId());
     }
   }
 
