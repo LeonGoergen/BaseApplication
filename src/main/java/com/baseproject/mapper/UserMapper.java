@@ -7,6 +7,8 @@ import org.mapstruct.*;
 @Mapper(componentModel = "spring")
 public interface UserMapper {
 
+  @Mapping(target = "lastActiveDateTime", ignore = true)
+  @Mapping(target = "isVerified", ignore = true)
   @Mapping(target = "isActive", ignore = true)
   @Mapping(target = "id", ignore = true)
   @Mapping(target = "version", ignore = true)
@@ -16,6 +18,7 @@ public interface UserMapper {
   @Mapping(target = "createdAt", ignore = true)
   User toEntity(UserCreateDto user);
 
+  @Mapping(target = "verified", source = "user.isVerified")
   @Mapping(target = "active", source = "user.isActive")
   UserDto toDto(User user);
 }

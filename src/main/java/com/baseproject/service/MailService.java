@@ -13,6 +13,7 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
 import java.io.UnsupportedEncodingException;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -25,14 +26,17 @@ public class MailService {
   @Value("${spring.mail.username}")
   private String fromEmail;
 
+  @Value("${spring.application.domain}")
+  private String applicationDomain;
+
   private final JavaMailSender mailSender;
   private final TemplateEngine templateEngine;
 
   @Async
-  public void sendRegistrationMail(String to, String name, String confirmationUrl) {
+  public void sendRegistrationMail(String to, String name, UUID tokenId) {
     Context context = new Context();
     context.setVariable("name", name);
-    context.setVariable("confirmationUrl", confirmationUrl);
+    context.setVariable("confirmationUrl", applicationDomain + "public/auth/confirmEmail?token=" + tokenId);
 
     String htmlContent = templateEngine.process("registration-template.html", context);
     sendMail(to, "Registration Confirmation", htmlContent);

@@ -31,5 +31,11 @@ public class AuthController {
     SessionInfoDto sessionInfo = authService.getSessionInfo(request);
     return ResponseEntity.ok(sessionInfo);
   }
+
+  @GetMapping("/confirmEmail")
+  public ResponseEntity<MessageDto> verifyEmail(@RequestParam("token") String token) {
+    authService.verifyEmail(token);
+    return ResponseEntity.accepted().build();
+  }
 }
 

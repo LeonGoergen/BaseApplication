@@ -3,7 +3,8 @@ package com.baseproject.service;
 import com.baseproject.dto.*;
 import com.baseproject.exception.*;
 import com.baseproject.mapper.UserMapper;
-import com.baseproject.model.User;
+import com.baseproject.model.*;
+import com.baseproject.repository.EmailVerificationTokenRepository;
 import jakarta.servlet.http.*;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +16,7 @@ import org.springframework.security.web.context.HttpSessionSecurityContextReposi
 import org.springframework.stereotype.Service;
 
 import java.time.*;
+import java.util.UUID;
 
 @Service
 @AllArgsConstructor
@@ -25,7 +27,18 @@ public class AuthService {
   private final UserService userService;
   private final UserMapper userMapper;
 
+  private final EmailVerificationTokenRepository emailVerificationTokenRepository;
+
   public UserDto login(LoginRequestDto requestDto, HttpServletRequest httpRequest) {
+    User user = userService.findByEmail(requestDto.email());
+
+    if (user.getIsVerified().equals(Boolean.FALSE)) {
+      log.warn("User {} is not verified", user.getId());
+      throw new ValidationException(ExceptionEnum.USER_NOT_VERIFIED)
+          .setHttpStatus(HttpStatus.UNAUTHORIZED)
+          .setReference("User " + user.getEmail() + " is not verified");
+    }
+
     try {
       Authentication authentication = authenticationManager.authenticate(
           new UsernamePasswordAuthenticationToken(requestDto.email(), requestDto.password())
@@ -44,7 +57,6 @@ public class AuthService {
           .setHttpStatus(HttpStatus.UNAUTHORIZED);
     }
 
-    User user = userService.findByEmail(requestDto.email());
     userService.updateLastActiveTime(user);
 
     log.info("User {} logged in successfully", user.getId());
@@ -92,5 +104,33 @@ public class AuthService {
             ZoneId.systemDefault()
         )
     );
+  }
+
+  public void verifyEmail(String token) {
+    EmailVerificationToken verificationToken = emailVerificationTokenRepository.findById(UUID.fromString(token))
+        .orElseThrow(() -> new RessourceNotFoundException(ExceptionEnum.EMAIL_VERIFICATION_TOKEN_NOT_FOUND));
+
+    if (verificationToken.isExpired()) {
+      log.warn("Email verification token {} is expired", token);
+      throw new ValidationException(ExceptionEnum.EMAIL_VERIFICATION_TOKEN_EXPIRED)
+          .setHttpStatus(HttpStatus.GONE)
+          .setReference("Email verification token " + token + " is expired");
+    }
+
+    User user = verificationToken.getUser();
+
+    if (user.getIsVerified()) {
+      log.warn("User {} is already verified", user.getId());
+      throw new ValidationException(ExceptionEnum.USER_ALREADY_VERIFIED)
+          .setHttpStatus(HttpStatus.BAD_REQUEST)
+          .setReference("User " + user.getEmail() + " is already verified");
+    }
+
+    user.setIsVerified(true);
+    userService.save(user);
+
+    emailVerificationTokenRepository.delete(verificationToken);
+
+    log.info("User {} verified successfully", user.getId());
   }
 }

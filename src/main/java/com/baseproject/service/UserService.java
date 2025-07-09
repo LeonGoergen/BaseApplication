@@ -3,9 +3,9 @@ package com.baseproject.service;
 import com.baseproject.dto.*;
 import com.baseproject.exception.*;
 import com.baseproject.mapper.UserMapper;
-import com.baseproject.model.User;
+import com.baseproject.model.*;
 import com.baseproject.model.enums.UserRoleEnum;
-import com.baseproject.repository.UserRepository;
+import com.baseproject.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +22,7 @@ import java.util.*;
 public class UserService {
 
   private final UserRepository userRepository;
+  private final EmailVerificationTokenRepository emailVerificationTokenRepository;
   private final UserMapper userMapper;
   private final PasswordEncoder passwordEncoder;
 
@@ -52,6 +53,7 @@ public class UserService {
     user.setRoles(Set.of(UserRoleEnum.GUEST));
     user.setPassword(passwordEncoder.encode(userDto.password()));
     user.setIsActive(true);
+    user.setIsVerified(false);
     user.setLastActiveDateTime(LocalDateTime.now());
 
     if (userRepository.findByEmail(user.getEmail()).isPresent()) {
@@ -61,7 +63,9 @@ public class UserService {
 
     User savedUser = userRepository.save(user);
 
-    mailService.sendRegistrationMail(savedUser.getEmail(), savedUser.getFirstName(), "https://youtube.com");
+    EmailVerificationToken verificationToken = new EmailVerificationToken(savedUser);
+    verificationToken = emailVerificationTokenRepository.save(verificationToken);
+    mailService.sendRegistrationMail(savedUser.getEmail(), savedUser.getFirstName(), verificationToken.getId());
 
     log.info("User saved successfully: {}", savedUser.getId());
 

@@ -1,7 +1,6 @@
 package com.baseproject.exception;
 
 import com.baseproject.dto.*;
-import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
