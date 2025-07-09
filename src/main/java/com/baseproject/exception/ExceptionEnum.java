@@ -4,8 +4,7 @@ import lombok.*;
 
 @Getter
 @AllArgsConstructor
-public enum ExceptionEnum
-{
+public enum ExceptionEnum {
 
   TOO_MANY_REQUESTS("E001", "Too many requests"),
 
@@ -16,6 +15,8 @@ public enum ExceptionEnum
 
   USERNAME_ALREADY_EXISTS("E003", "Username already exists"),
   EMAIL_ALREADY_EXISTS("E004", "Email already exists"),
+
+  MAIL_SERVICE_NOT_AVAILABLE("E005", "Mail service is not available"),
 
   UNKNOW_ERROR("E999", "Unexpected error occurred");
 

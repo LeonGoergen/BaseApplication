@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Registrierungsbestätigung</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f7f7;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: #ffffff;
+            padding: 30px;
+            margin: 0 auto;
+            max-width: 600px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            color: #2c3e50;
+        }
+
+        p {
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 12px 20px;
+            margin-top: 10px;
+            background-color: #3498db;
+            color: white !important;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        .button:hover {
+            background-color: #2980b9;
+        }
+
+        footer {
+            font-size: 12px;
+            color: #777;
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        footer a {
+            color: #3498db;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Hallo, <span th:text="${name}">Name</span>!</h2>
+    <p>Vielen Dank für Ihre Registrierung bei <strong>MyApp</strong>. Wir freuen uns, Sie an Bord zu haben!</p>
+    <p>Um Ihre Registrierung abzuschließen, müssen Sie Ihre E-Mail-Adresse bestätigen.</p>
+    <p>Bitte klicken Sie auf den folgenden Link, um Ihre E-Mail-Adresse zu bestätigen:</p>
+    <p>
+        <a th:href="@{${confirmationUrl}}" class="button">E-Mail-Adresse bestätigen</a>
+    </p>
+
+    <p>Falls Sie diese Registrierung nicht vorgenommen haben, ignorieren Sie bitte diese E-Mail.</p>
+    <p>Vielen Dank!</p>
+    <p>Das Team von <strong>MyApp</strong></p>
+
+    <hr>
+    <footer>
+        <p>Impressum: <a href="https://www.example.com/impressum">www.example.com/impressum</a></p>
+        <p>Datenschutz: <a href="https://www.example.com/datenschutz">www.example.com/datenschutz</a></p>
+        <p>Kontakt: <a href="mailto:test@test.de">test@test.de</a></p>
+        <p>© 2023 MyApp. Alle Rechte vorbehalten.</p>
+    </footer>
+</div>
+</body>
+</html>

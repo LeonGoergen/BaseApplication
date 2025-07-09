@@ -47,6 +47,22 @@ public class GlobalExceptionHandler {
     return new ResponseEntity<>(errorResponse, httpStatus);
   }
 
+  @ExceptionHandler(ServiceFailedException.class)
+  public ResponseEntity<Object> handleServiceFailedException(ServiceFailedException ex) {
+
+    ErrorResponseDto errorResponse = new ErrorResponseDto(
+        LocalDateTime.now(),
+        ex.getCode(),
+        ex.getMessage(),
+        ex.getReference()
+    );
+    logMessage(errorResponse, ex);
+
+    HttpStatus httpStatus = ex.getHttpStatus() != null ? ex.getHttpStatus() : HttpStatus.INTERNAL_SERVER_ERROR;
+
+    return new ResponseEntity<>(errorResponse, httpStatus);
+  }
+
   @ExceptionHandler(Exception.class)
   public ResponseEntity<Object> handleGeneralException(Exception ex) {
 
@@ -74,24 +90,22 @@ public class GlobalExceptionHandler {
 
   private void logMessage(ErrorResponseDto errorResponse, Exception ex) {
     log.error(
-        "Exception occurred [timestamp: {}, code: {}, message: {}, reference: {}]: {}",
+        "Exception occurred [timestamp: {}, code: {}, message: {}, reference: {}]",
         errorResponse.timestamp(),
         errorResponse.code(),
         errorResponse.message(),
-        errorResponse.reference(),
-        ex
+        errorResponse.reference()
     );
     log.error(ex.getMessage(), ex);
   }
 
   private void logMessage(ErrorResponseDto errorResponse, Throwable ex) {
     log.error(
-        "Exception occurred [timestamp: {}, code: {}, message: {}, reference: {}]: {}",
+        "Exception occurred [timestamp: {}, code: {}, message: {}, reference: {}]",
         errorResponse.timestamp(),
         errorResponse.code(),
         errorResponse.message(),
-        errorResponse.reference(),
-        ex
+        errorResponse.reference()
     );
     log.error(ex.getMessage(), ex);
   }

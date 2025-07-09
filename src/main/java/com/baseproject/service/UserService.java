@@ -25,6 +25,8 @@ public class UserService {
   private final UserMapper userMapper;
   private final PasswordEncoder passwordEncoder;
 
+  private final MailService mailService;
+
   public User findByUsername(String username) throws ValidationException {
     return userRepository.findByUsername(username)
         .orElseThrow(() -> new ValidationException(ExceptionEnum.USER_NOT_FOUND)
@@ -39,8 +41,12 @@ public class UserService {
 
   @Transactional
   public User save(User user) {
-    log.info("Saving user: {}", user.getUsername());
     return userRepository.save(user);
+  }
+
+  @Transactional
+  public void delete(User user) {
+    userRepository.delete(user);
   }
 
   @Transactional
@@ -65,6 +71,8 @@ public class UserService {
 
     User savedUser = userRepository.save(user);
 
+    mailService.sendRegistrationMail(savedUser.getEmail(), savedUser.getFirstName(), "https://youtube.com");
+
     log.info("User saved successfully: {}", savedUser.getUsername());
 
     return userMapper.toDto(savedUser);
@@ -77,30 +85,7 @@ public class UserService {
   }
 
   @Transactional
-  public List<User> findInactiveUsers(LocalDateTime lastActiveThreshold) {
-    log.info("Finding users inactive since: {}", lastActiveThreshold);
-    List<User> inactiveUsers = userRepository.findByLastActiveDateTimeBeforeAndIsActiveTrue(lastActiveThreshold);
-
-    if (inactiveUsers.isEmpty()) {
-      log.info("No inactive users found to deactivate");
-      return Collections.emptyList();
-    }
-
-    log.info("Found {} inactive users", inactiveUsers.size());
-    return inactiveUsers;
-  }
-
-  @Transactional
-  public List<User> findUsersToDelete(LocalDateTime lastActiveThreshold) {
-    log.info("Finding deactivated users since: {}", lastActiveThreshold);
-    List<User> usersToDelete = userRepository.findByLastActiveDateTimeBefore(lastActiveThreshold);
-
-    if (usersToDelete.isEmpty()) {
-      log.info("No users found to delete");
-      return Collections.emptyList();
-    }
-
-    log.info("Found {} users to delete", usersToDelete.size());
-    return usersToDelete;
+  public List<User> findWithLastActiveDateBefore(LocalDateTime lastActiveThreshold, boolean isActive) {
+    return userRepository.findByLastActiveDateTimeBeforeAndIsActive(lastActiveThreshold, isActive);
   }
 }
