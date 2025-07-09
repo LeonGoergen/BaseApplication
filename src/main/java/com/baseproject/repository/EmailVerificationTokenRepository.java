@@ -8,4 +8,5 @@ import java.util.UUID;
 
 @Repository
 public interface EmailVerificationTokenRepository  extends JpaRepository<EmailVerificationToken, UUID> {
+  void deleteByUser(User user);
 }

@@ -37,5 +37,12 @@ public class AuthController {
     authService.verifyEmail(token);
     return ResponseEntity.accepted().build();
   }
+
+  // # TODO: how to reach this endpoint?
+  @GetMapping("/resendConfirmation")
+  public ResponseEntity<MessageDto> resendConfirmationEmail(@RequestParam("email") String email) {
+    authService.resendConfirmationEmail(email);
+    return ResponseEntity.ok().build();
+  }
 }
 

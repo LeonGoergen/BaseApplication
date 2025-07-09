@@ -25,6 +25,7 @@ public class AuthService {
 
   private final AuthenticationManager authenticationManager;
   private final UserService userService;
+  private final MailService mailService;
   private final UserMapper userMapper;
 
   private final EmailVerificationTokenRepository emailVerificationTokenRepository;
@@ -132,5 +133,23 @@ public class AuthService {
     emailVerificationTokenRepository.delete(verificationToken);
 
     log.info("User {} verified successfully", user.getId());
+  }
+
+  public void resendConfirmationEmail(String email) {
+    User user = userService.findByEmail(email);
+
+    if (user.getIsVerified()) {
+      log.warn("User {} is already verified", user.getId());
+      throw new ValidationException(ExceptionEnum.USER_ALREADY_VERIFIED)
+          .setHttpStatus(HttpStatus.BAD_REQUEST)
+          .setReference("User " + user.getEmail() + " is already verified");
+    }
+
+    emailVerificationTokenRepository.deleteByUser(user);
+
+    EmailVerificationToken token = new EmailVerificationToken(user);
+    token = emailVerificationTokenRepository.save(token);
+
+    mailService.sendRegistrationMail(user.getEmail(), user.getFirstName(), token.getId());
   }
 }
