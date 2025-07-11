@@ -4,10 +4,11 @@ import com.baseproject.dto.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.time.LocalDateTime;
 
-import static com.baseproject.exception.ExceptionEnum.UNKNOW_ERROR;
+import static com.baseproject.exception.ExceptionEnum.*;
 
 @ControllerAdvice
 @Slf4j
@@ -60,6 +61,17 @@ public class GlobalExceptionHandler {
     HttpStatus httpStatus = ex.getHttpStatus() != null ? ex.getHttpStatus() : HttpStatus.INTERNAL_SERVER_ERROR;
 
     return new ResponseEntity<>(errorResponse, httpStatus);
+  }
+
+  @ExceptionHandler(NoResourceFoundException.class)
+  public ResponseEntity<Object> handleNoResourceFoundException(NoResourceFoundException ex) {
+    ErrorResponseDto errorResponse = new ErrorResponseDto(
+        LocalDateTime.now(),
+        RESOURCE_NOT_FOUND.getCode(),
+        RESOURCE_NOT_FOUND.getMessage()
+    );
+
+    return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
   }
 
   @ExceptionHandler(Exception.class)

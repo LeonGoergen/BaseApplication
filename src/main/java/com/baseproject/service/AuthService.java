@@ -111,6 +111,7 @@ public class AuthService {
     );
   }
 
+  @Transactional
   public void verifyEmail(String token) {
     EmailVerificationToken verificationToken = emailVerificationTokenRepository.findById(UUID.fromString(token))
         .orElseThrow(() -> new RessourceNotFoundException(ExceptionEnum.EMAIL_VERIFICATION_TOKEN_NOT_FOUND));
@@ -139,6 +140,7 @@ public class AuthService {
     log.info("User {} verified successfully", user.getId());
   }
 
+  @Transactional
   public void resendConfirmationEmail(EmailDto emailDto) {
     User user = userService.findByEmail(emailDto.email());
 
@@ -157,6 +159,7 @@ public class AuthService {
     mailService.sendRegistrationMail(user.getEmail(), user.getFirstName(), token.getId());
   }
 
+  @Transactional
   public void sendPasswordResetEmail(EmailDto emailDto) {
     User user = userService.findByEmail(emailDto.email());
 

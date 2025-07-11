@@ -24,6 +24,7 @@ public enum ExceptionEnum
 
   MAIL_SERVICE_NOT_AVAILABLE("E005", "Mail service is not available"),
 
+  RESOURCE_NOT_FOUND("E404", "Resource not found"),
   UNKNOW_ERROR("E999", "Unexpected error occurred");
 
   private final String code;

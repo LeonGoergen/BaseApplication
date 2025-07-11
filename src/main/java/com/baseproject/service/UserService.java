@@ -50,7 +50,7 @@ public class UserService {
   }
 
   @Transactional
-  public UserDto createUser(UserCreateDto userDto) {
+  public UserDto createUserFromDto(UserCreateDto userDto) {
     log.info("Creating user: {}", userDto.email());
 
     User user = userMapper.toEntity(userDto);
