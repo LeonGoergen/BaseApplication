@@ -39,7 +39,7 @@ public class MailService {
   public void sendRegistrationMail(String to, String name, UUID tokenId) {
     Context context = new Context();
     context.setVariable("name", name);
-    context.setVariable("confirmationUrl", applicationDomain + "public/auth/confirmEmail?token=" + tokenId);
+    context.setVariable("confirmationUrl", applicationDomain + "public/auth/confirm-email?token=" + tokenId);
 
     String htmlContent = templateEngine.process("registration-template.html", context);
     sendMail(to, "Registration Confirmation", htmlContent);
@@ -64,6 +64,16 @@ public class MailService {
 
     String htmlContent = templateEngine.process("deletion-warning-template.html", context);
     sendMail(to, "Account Deletion Warning", htmlContent);
+  }
+
+  @Async
+  public void sendPasswordResetMail(String to, String name, UUID tokenId) {
+    Context context = new Context();
+    context.setVariable("name", name);
+    context.setVariable("resetUrl", applicationDomain + "public/auth/reset-password?token=" + tokenId);
+
+    String htmlContent = templateEngine.process("password-reset-template.html", context);
+    sendMail(to, "Password Reset Request", htmlContent);
   }
 
   private void sendMail(String to, String subject, String htmlContent) {

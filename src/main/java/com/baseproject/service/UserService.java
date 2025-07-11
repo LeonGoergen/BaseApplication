@@ -40,6 +40,10 @@ public class UserService {
     return userRepository.save(user);
   }
 
+  @Transactional User update(User user) {
+    return userRepository.save(user);
+  }
+
   @Transactional
   public void delete(User user) {
     userRepository.delete(user);

@@ -1,6 +1,7 @@
 package com.baseproject.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import lombok.NonNull;
@@ -12,6 +13,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.*;
 
 import java.io.*;
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -31,6 +33,16 @@ public class LoggingFilter extends OncePerRequestFilter {
     String requestURI = request.getRequestURI();
     String method = request.getMethod();
 
+    String requestBody = getRequestBody(wrappedRequest);
+
+    StringBuilder logMessageIn = new StringBuilder();
+    logMessageIn.append("→ [").append(method).append(" ").append(requestURI).append("] ");
+    if (!requestBody.isEmpty()) {
+      logMessageIn.append("Body: ").append(requestBody);
+    }
+
+    log.info(logMessageIn.toString());
+
     StopWatch stopWatch = new StopWatch();
     stopWatch.start();
 
@@ -39,11 +51,17 @@ public class LoggingFilter extends OncePerRequestFilter {
     } finally {
       stopWatch.stop();
 
-      String requestBody = getRequestBody(wrappedRequest);
       String responseBody = getResponseBody(wrappedResponse);
 
-      log.info("→ [{} {}] Body: {}", method, requestURI, requestBody);
-      log.info("← [Status: {}] Body: {} ({} ms)", wrappedResponse.getStatus(), responseBody, stopWatch.getTotalTimeMillis());
+      StringBuilder logMessageOut = new StringBuilder();
+      logMessageOut.append("← [Status: ").append(wrappedResponse.getStatus()).append("] ");
+      if (!responseBody.isEmpty()) {
+        logMessageOut.append("Body: ").append(responseBody).append(" (").append(stopWatch.getTotalTimeMillis()).append(" ms)");
+      } else {
+        logMessageOut.append("No response body (").append(stopWatch.getTotalTimeMillis()).append(" ms)");
+      }
+
+      log.info(logMessageOut.toString());
 
       wrappedResponse.copyBodyToResponse();
     }
@@ -72,10 +90,17 @@ public class LoggingFilter extends OncePerRequestFilter {
   }
 
   private String compactJson(String raw) {
+    if (raw == null || raw.isBlank()) return "";
+
     try {
-      if (raw == null || raw.isBlank()) return "";
-      Object json = objectMapper.readValue(raw, Object.class);
-      return objectMapper.writeValueAsString(json);
+      JsonNode root = objectMapper.readTree(raw);
+      if (root.isObject()) {
+        ObjectNode objectNode = (ObjectNode) root;
+        if (objectNode.has("password")) {
+          objectNode.put("password", "*****");
+        }
+      }
+      return objectMapper.writeValueAsString(root);
     } catch (IOException e) {
       return raw.replaceAll("[\\n\\r]+", " ").trim();
     }

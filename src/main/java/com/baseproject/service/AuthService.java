@@ -4,14 +4,16 @@ import com.baseproject.dto.*;
 import com.baseproject.exception.*;
 import com.baseproject.mapper.UserMapper;
 import com.baseproject.model.*;
-import com.baseproject.repository.EmailVerificationTokenRepository;
+import com.baseproject.repository.*;
 import jakarta.servlet.http.*;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.*;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Service;
 
@@ -27,8 +29,10 @@ public class AuthService {
   private final UserService userService;
   private final MailService mailService;
   private final UserMapper userMapper;
+  private final PasswordEncoder passwordEncoder;
 
   private final EmailVerificationTokenRepository emailVerificationTokenRepository;
+  private final PasswordResetTokenRepository passwordResetTokenRepository;
 
   public UserDto login(LoginRequestDto requestDto, HttpServletRequest httpRequest) {
     User user = userService.findByEmail(requestDto.email());
@@ -135,8 +139,8 @@ public class AuthService {
     log.info("User {} verified successfully", user.getId());
   }
 
-  public void resendConfirmationEmail(String email) {
-    User user = userService.findByEmail(email);
+  public void resendConfirmationEmail(EmailDto emailDto) {
+    User user = userService.findByEmail(emailDto.email());
 
     if (user.getIsVerified()) {
       log.warn("User {} is already verified", user.getId());
@@ -151,5 +155,37 @@ public class AuthService {
     token = emailVerificationTokenRepository.save(token);
 
     mailService.sendRegistrationMail(user.getEmail(), user.getFirstName(), token.getId());
+  }
+
+  public void sendPasswordResetEmail(EmailDto emailDto) {
+    User user = userService.findByEmail(emailDto.email());
+
+    passwordResetTokenRepository.deleteByUser(user);
+
+    PasswordResetToken token = new PasswordResetToken(user);
+    token = passwordResetTokenRepository.save(token);
+
+    mailService.sendPasswordResetMail(user.getEmail(), user.getFirstName(), token.getId());
+  }
+
+  @Transactional
+  public void resetPassword(PasswordResetRequestDto requestDto) {
+    PasswordResetToken token = passwordResetTokenRepository.findById(UUID.fromString(requestDto.token()))
+        .orElseThrow(() -> new RessourceNotFoundException(ExceptionEnum.PASSWORD_RESET_TOKEN_NOT_FOUND));
+
+    if (token.isExpired()) {
+      log.warn("Password reset token {} is expired", requestDto.token());
+      throw new ValidationException(ExceptionEnum.PASSWORD_RESET_TOKEN_EXPIRED)
+          .setHttpStatus(HttpStatus.GONE)
+          .setReference("Password reset token " + requestDto.token() + " is expired");
+    }
+
+    User user = token.getUser();
+    user.setPassword(passwordEncoder.encode(requestDto.password()));
+    userService.update(user);
+
+    passwordResetTokenRepository.delete(token);
+
+    log.info("Password for user {} reset successfully", user.getId());
   }
 }

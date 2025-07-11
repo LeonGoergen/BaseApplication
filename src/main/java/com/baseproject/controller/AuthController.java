@@ -32,16 +32,28 @@ public class AuthController {
     return ResponseEntity.ok(sessionInfo);
   }
 
-  @GetMapping("/confirmEmail")
+  @GetMapping("/confirm-email")
   public ResponseEntity<MessageDto> verifyEmail(@RequestParam("token") String token) {
     authService.verifyEmail(token);
     return ResponseEntity.accepted().build();
   }
 
   // # TODO: how to reach this endpoint?
-  @GetMapping("/resendConfirmation")
-  public ResponseEntity<MessageDto> resendConfirmationEmail(@RequestParam("email") String email) {
-    authService.resendConfirmationEmail(email);
+  @PostMapping("/resend-confirmation")
+  public ResponseEntity<MessageDto> resendConfirmationEmail(@RequestBody EmailDto emailDto) {
+    authService.resendConfirmationEmail(emailDto);
+    return ResponseEntity.ok().build();
+  }
+
+  @PostMapping("/forgot-password")
+  public ResponseEntity<MessageDto> sendPasswordResetEMail(@RequestBody EmailDto emailDto) {
+    authService.sendPasswordResetEmail(emailDto);
+    return ResponseEntity.ok().build();
+  }
+
+  @PostMapping("/reset-password")
+  public ResponseEntity<MessageDto> resetPassword(@RequestBody PasswordResetRequestDto request) {
+    authService.resetPassword(request);
     return ResponseEntity.ok().build();
   }
 }
