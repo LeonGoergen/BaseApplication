@@ -52,16 +52,16 @@ public class UserService {
 
   @Transactional
   public User create(UserCreateDto userDto) {
-    if (userRepository.findByEmail(userDto.email()).isPresent()) {
+    if (userRepository.findByEmail(userDto.getEmail()).isPresent()) {
       throw new ValidationException(ExceptionEnum.EMAIL_ALREADY_EXISTS)
           .setHttpStatus(HttpStatus.CONFLICT);
     }
 
-    log.info("Creating user: {}", userDto.email());
+    log.info("Creating user: {}", userDto.getEmail());
 
     User user = userMapper.toEntity(userDto);
     user.setRoles(Set.of(UserRoleEnum.GUEST));
-    user.setPassword(passwordEncoder.encode(userDto.password()));
+    user.setPassword(passwordEncoder.encode(userDto.getPassword()));
     user.setIsActive(true);
     user.setIsVerified(false);
     user.setLastActiveDateTime(LocalDateTime.now());

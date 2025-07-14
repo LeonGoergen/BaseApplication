@@ -1,0 +1,359 @@
+openapi: 3.0.3
+info:
+  title: API
+  version: 1.0.0
+paths:
+  /public/auth/login:
+    post:
+      summary: User login
+      operationId: login
+      tags:
+        - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequestDto'
+      responses:
+        '200':
+          description: Successfully logged in user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDto'
+
+  /public/auth/logout:
+    post:
+      summary: User logout
+      operationId: logout
+      tags:
+        - Auth
+      responses:
+        '200':
+          description: Logout confirmation message
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageDto'
+
+  /public/auth/info:
+    get:
+      summary: Get session information
+      operationId: getSessionInfo
+      tags:
+        - Auth
+      responses:
+        '200':
+          description: Session info
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionInfoDto'
+
+  /public/auth/confirm-email:
+    get:
+      summary: Verify email with token
+      operationId: confirmEmail
+      tags:
+        - Auth
+      parameters:
+        - name: token
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '202':
+          description: Email verification accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageDto'
+
+  /public/auth/resend-confirmation:
+    post:
+      summary: Resend confirmation email
+      operationId: resendConfirmation
+      tags:
+        - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmailDto'
+      responses:
+        '200':
+          description: Confirmation email resent
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageDto'
+
+  /public/auth/forgot-password:
+    post:
+      summary: Send password reset email
+      operationId: forgotPassword
+      tags:
+        - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmailDto'
+      responses:
+        '200':
+          description: Password reset email sent
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageDto'
+
+  /public/auth/reset-password:
+    post:
+      summary: Reset password with token
+      operationId: resetPassword
+      tags:
+        - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PasswordResetRequestDto'
+      responses:
+        '200':
+          description: Password reset successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageDto'
+
+  /public/auth/register:
+    post:
+      summary: Create a new user
+      operationId: register
+      tags:
+        - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCreateDto'
+      responses:
+        '200':
+          description: Created user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDto'
+
+  /actuator/health:
+    get:
+      summary: Health status
+      operationId: healthCheck
+      responses:
+        '200':
+          description: Application health info
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+
+  /actuator/info:
+    get:
+      summary: Application info
+      operationId: appInfo
+      responses:
+        '200':
+          description: Application info
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+
+  /oauth2/authorization/google:
+    get:
+      summary: OAuth2 Google login redirect
+      operationId: googleOAuth2Login
+      tags:
+        - Auth
+      responses:
+        '200':
+          description: Redirect to Google OAuth2 login
+
+  /oauth2/authorization/facebook:
+    get:
+      summary: OAuth2 Facebook login redirect
+      operationId: facebookOAuth2Login
+      tags:
+        - Auth
+      responses:
+        '200':
+          description: Redirect to Facebook OAuth2 login
+
+components:
+  schemas:
+    EmailDto:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+      required:
+        - email
+
+    ErrorResponseDto:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        code:
+          type: string
+        message:
+          type: string
+        reference:
+          type: string
+      required:
+        - timestamp
+        - code
+        - message
+
+    LoginRequestDto:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+      required:
+        - email
+        - password
+
+    MessageDto:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        message:
+          type: string
+      required: []
+
+    PasswordResetRequestDto:
+      type: object
+      properties:
+        token:
+          type: string
+        password:
+          type: string
+      required:
+        - token
+        - password
+
+    SessionInfoDto:
+      type: object
+      properties:
+        id:
+          type: string
+        creationTime:
+          type: string
+          format: date-time
+        lastAccessedTime:
+          type: string
+          format: date-time
+        maxInactiveIntervalSeconds:
+          type: integer
+          format: int32
+        expiresAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - creationTime
+        - lastAccessedTime
+        - maxInactiveIntervalSeconds
+        - expiresAt
+
+    UserCreateDto:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        phoneNumber:
+          type: string
+        address:
+          type: string
+        city:
+          type: string
+        country:
+          type: string
+        postalCode:
+          type: string
+      required:
+        - email
+        - password
+        - firstName
+        - lastName
+
+    UserDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        email:
+          type: string
+          format: email
+        firstName:
+          type: string
+        lastName:
+          type: string
+        phoneNumber:
+          type: string
+        address:
+          type: string
+        city:
+          type: string
+        country:
+          type: string
+        postalCode:
+          type: string
+        active:
+          type: boolean
+        verified:
+          type: boolean
+        roles:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserRoleEnum'
+      required:
+        - id
+        - email
+        - firstName
+        - lastName
+        - active
+        - verified
+        - roles
+
+    UserRoleEnum:
+      type: string
+      enum:
+        - GUEST
+        - PREMIUM
+        - ADMIN
+        - EDITOR

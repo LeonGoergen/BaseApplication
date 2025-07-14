@@ -6,7 +6,6 @@ import io.github.bucket4j.*;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import lombok.NonNull;
-import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -47,7 +46,7 @@ public class RateFilter extends OncePerRequestFilter {
       log.warn("Rate limit exceeded for request: {}", request.getRequestURI());
 
       ErrorResponseDto errorResponse = new ErrorResponseDto(
-          LocalDateTime.now(),
+          OffsetDateTime.now(),
           TOO_MANY_REQUESTS.getCode(),
           TOO_MANY_REQUESTS.getMessage()
       );

@@ -35,7 +35,7 @@ public class AuthService {
   private final PasswordResetTokenRepository passwordResetTokenRepository;
 
   public UserDto login(LoginRequestDto requestDto, HttpServletRequest httpRequest) {
-    User user = userService.findByEmail(requestDto.email());
+    User user = userService.findByEmail(requestDto.getEmail());
 
     if (user.getIsVerified().equals(Boolean.FALSE)) {
       log.warn("User {} is not verified", user.getId());
@@ -46,7 +46,7 @@ public class AuthService {
 
     try {
       Authentication authentication = authenticationManager.authenticate(
-          new UsernamePasswordAuthenticationToken(requestDto.email(), requestDto.password())
+          new UsernamePasswordAuthenticationToken(requestDto.getEmail(), requestDto.getPassword())
       );
 
       SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -57,7 +57,7 @@ public class AuthService {
           SecurityContextHolder.getContext()
       );
     } catch (Exception e) {
-      log.warn("Invalid credentials for user: {}", requestDto.email(), e);
+      log.warn("Invalid credentials for user: {}", requestDto.getEmail(), e);
       throw new ValidationException(ExceptionEnum.INVALID_CREDENTIALS)
           .setHttpStatus(HttpStatus.UNAUTHORIZED);
     }
@@ -81,7 +81,11 @@ public class AuthService {
     request.getSession().invalidate();
     SecurityContextHolder.clearContext();
 
-    return new MessageDto(LocalDateTime.now(), "Logged out successfully");
+    MessageDto message = new MessageDto();
+    message.setMessage("Logged out successfully");
+    message.setTimestamp(OffsetDateTime.now());
+
+    return message;
   }
 
   public SessionInfoDto getSessionInfo(HttpServletRequest request) {
@@ -101,10 +105,10 @@ public class AuthService {
 
     return new SessionInfoDto(
         session.getId(),
-        LocalDateTime.ofInstant(Instant.ofEpochMilli(session.getCreationTime()), ZoneId.systemDefault()),
-        LocalDateTime.ofInstant(Instant.ofEpochMilli(session.getLastAccessedTime()), ZoneId.systemDefault()),
+        OffsetDateTime.ofInstant(Instant.ofEpochMilli(session.getCreationTime()), ZoneId.systemDefault()),
+        OffsetDateTime.ofInstant(Instant.ofEpochMilli(session.getLastAccessedTime()), ZoneId.systemDefault()),
         session.getMaxInactiveInterval(),
-        LocalDateTime.ofInstant(
+        OffsetDateTime.ofInstant(
             Instant.ofEpochMilli(session.getLastAccessedTime() + session.getMaxInactiveInterval() * 1000L),
             ZoneId.systemDefault()
         )
@@ -142,7 +146,7 @@ public class AuthService {
 
   @Transactional
   public void resendConfirmationEmail(EmailDto emailDto) {
-    User user = userService.findByEmail(emailDto.email());
+    User user = userService.findByEmail(emailDto.getEmail());
 
     if (user.getIsVerified()) {
       log.warn("User {} is already verified", user.getId());
@@ -161,7 +165,7 @@ public class AuthService {
 
   @Transactional
   public void sendPasswordResetEmail(EmailDto emailDto) {
-    User user = userService.findByEmail(emailDto.email());
+    User user = userService.findByEmail(emailDto.getEmail());
 
     passwordResetTokenRepository.deleteByUser(user);
 
@@ -173,18 +177,18 @@ public class AuthService {
 
   @Transactional
   public void resetPassword(PasswordResetRequestDto requestDto) {
-    PasswordResetToken token = passwordResetTokenRepository.findById(UUID.fromString(requestDto.token()))
+    PasswordResetToken token = passwordResetTokenRepository.findById(UUID.fromString(requestDto.getToken()))
         .orElseThrow(() -> new RessourceNotFoundException(ExceptionEnum.PASSWORD_RESET_TOKEN_NOT_FOUND));
 
     if (token.isExpired()) {
-      log.warn("Password reset token {} is expired", requestDto.token());
+      log.warn("Password reset token {} is expired", requestDto.getToken());
       throw new ValidationException(ExceptionEnum.PASSWORD_RESET_TOKEN_EXPIRED)
           .setHttpStatus(HttpStatus.GONE)
-          .setReference("Password reset token " + requestDto.token() + " is expired");
+          .setReference("Password reset token " + requestDto.getToken() + " is expired");
     }
 
     User user = token.getUser();
-    user.setPassword(passwordEncoder.encode(requestDto.password()));
+    user.setPassword(passwordEncoder.encode(requestDto.getPassword()));
     userService.update(user);
 
     passwordResetTokenRepository.delete(token);
