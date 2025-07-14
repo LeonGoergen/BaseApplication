@@ -68,7 +68,8 @@ public class GlobalExceptionHandler {
     ErrorResponseDto errorResponse = new ErrorResponseDto(
         LocalDateTime.now(),
         RESOURCE_NOT_FOUND.getCode(),
-        RESOURCE_NOT_FOUND.getMessage()
+        RESOURCE_NOT_FOUND.getMessage(),
+        ex.getResourcePath()
     );
 
     return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);

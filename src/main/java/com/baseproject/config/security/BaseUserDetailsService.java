@@ -1,4 +1,4 @@
-package com.baseproject.config;
+package com.baseproject.config.security;
 
 import com.baseproject.model.User;
 import com.baseproject.service.UserService;

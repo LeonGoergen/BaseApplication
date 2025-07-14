@@ -20,7 +20,7 @@ public class User extends BaseEntity  {
   @Column(name = "email", nullable = false, unique = true)
   private String email;
 
-  @Column(name = "password", nullable = false)
+  @Column(name = "password")
   private String password;
 
   @Column(name = "first_name")
@@ -59,4 +59,7 @@ public class User extends BaseEntity  {
   @NotAudited
   @Column(name = "last_active_date_time")
   private LocalDateTime lastActiveDateTime;
+
+  @Column(name = "provider")
+  private String provider;
 }

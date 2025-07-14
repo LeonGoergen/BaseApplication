@@ -7,6 +7,7 @@ import org.mapstruct.*;
 @Mapper(componentModel = "spring")
 public interface UserMapper {
 
+  @Mapping(target = "provider", ignore = true)
   @Mapping(target = "lastActiveDateTime", ignore = true)
   @Mapping(target = "isVerified", ignore = true)
   @Mapping(target = "isActive", ignore = true)

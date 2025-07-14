@@ -40,7 +40,8 @@ public class UserService {
     return userRepository.save(user);
   }
 
-  @Transactional User update(User user) {
+  @Transactional
+  public User update(User user) {
     return userRepository.save(user);
   }
 
@@ -50,7 +51,12 @@ public class UserService {
   }
 
   @Transactional
-  public UserDto createUserFromDto(UserCreateDto userDto) {
+  public User create(UserCreateDto userDto) {
+    if (userRepository.findByEmail(userDto.email()).isPresent()) {
+      throw new ValidationException(ExceptionEnum.EMAIL_ALREADY_EXISTS)
+          .setHttpStatus(HttpStatus.CONFLICT);
+    }
+
     log.info("Creating user: {}", userDto.email());
 
     User user = userMapper.toEntity(userDto);
@@ -59,11 +65,7 @@ public class UserService {
     user.setIsActive(true);
     user.setIsVerified(false);
     user.setLastActiveDateTime(LocalDateTime.now());
-
-    if (userRepository.findByEmail(user.getEmail()).isPresent()) {
-      throw new ValidationException(ExceptionEnum.EMAIL_ALREADY_EXISTS)
-          .setHttpStatus(HttpStatus.CONFLICT);
-    }
+    user.setProvider("default");
 
     User savedUser = userRepository.save(user);
 
@@ -73,7 +75,31 @@ public class UserService {
 
     log.info("User saved successfully: {}", savedUser.getId());
 
-    return userMapper.toDto(savedUser);
+    return savedUser;
+  }
+
+  @Transactional
+  public User create(String email, String name, String provider) {
+    log.info("Creating user with email via oAuth2: {}", email);
+
+    String firstName = name != null ? name.split(" ")[0] : "";
+    String lastName = name != null ? name.substring(firstName.length()).trim() : "";
+
+    User user = new User();
+    user.setEmail(email);
+    user.setFirstName(firstName);
+    user.setLastName(lastName);
+    user.setRoles(Set.of(UserRoleEnum.GUEST));
+    user.setIsActive(true);
+    user.setIsVerified(true);
+    user.setLastActiveDateTime(LocalDateTime.now());
+    user.setProvider(provider);
+
+    User savedUser = userRepository.save(user);
+
+    log.info("User saved successfully via oAuth2: {}", savedUser.getId());
+
+    return savedUser;
   }
 
   @Transactional

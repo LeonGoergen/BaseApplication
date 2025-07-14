@@ -1,5 +1,6 @@
-package com.baseproject.config;
+package com.baseproject.config.security;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.*;
 import org.springframework.security.config.Customizer;
@@ -11,14 +12,17 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableMethodSecurity
+@RequiredArgsConstructor
 public class WebSecurityConfig {
 
   @Value("${spring.profiles.active:default}")
   private String activeProfile;
 
+  private final BaseOAuth2UserService baseOAuth2UserService;
+
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-    if (activeProfile.equals("develop")) {
+    if (!activeProfile.equals("develop")) {
       http
           .csrf(AbstractHttpConfigurer::disable)
           .authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
@@ -33,6 +37,9 @@ public class WebSecurityConfig {
             .requestMatchers("/admin/**").hasRole("ADMIN")
             .requestMatchers("/**").authenticated()
             .anyRequest().denyAll()
+        )
+        .oauth2Login(oauth -> oauth
+            .userInfoEndpoint(userInfo -> userInfo.userService(baseOAuth2UserService))
         )
         .sessionManagement(session -> session
             .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)

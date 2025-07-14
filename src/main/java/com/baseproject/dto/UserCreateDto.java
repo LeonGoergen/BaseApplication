@@ -7,7 +7,7 @@ public record UserCreateDto(
     @NonNull String password,
     @NonNull String firstName,
     @NonNull String lastName,
-    @NonNull String phoneNumber,
+    String phoneNumber,
     String address,
     String city,
     String country,

@@ -10,7 +10,7 @@ public record UserDto(
     @NonNull String email,
     @NonNull String firstName,
     @NonNull String lastName,
-    @NonNull String phoneNumber,
+    String phoneNumber,
     String address,
     String city,
     String country,

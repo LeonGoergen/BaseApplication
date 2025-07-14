@@ -1,4 +1,4 @@
-package com.baseproject.config;
+package com.baseproject.config.security;
 
 import org.springframework.context.annotation.*;
 import org.springframework.security.authentication.AuthenticationManager;
