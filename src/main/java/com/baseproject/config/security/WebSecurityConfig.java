@@ -22,7 +22,7 @@ public class WebSecurityConfig {
 
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-    if (!activeProfile.equals("develop")) {
+    if (activeProfile.equals("develop")) {
       http
           .csrf(AbstractHttpConfigurer::disable)
           .authorizeHttpRequests(auth -> auth.anyRequest().permitAll());

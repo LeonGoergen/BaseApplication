@@ -1,5 +1,6 @@
-package com.baseproject.exception;
+package com.baseproject.exception.exceptions;
 
+import com.baseproject.exception.ExceptionEnum;
 import lombok.*;
 import lombok.experimental.Accessors;
 import org.springframework.http.HttpStatus;

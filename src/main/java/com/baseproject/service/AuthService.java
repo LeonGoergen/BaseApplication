@@ -2,6 +2,7 @@ package com.baseproject.service;
 
 import com.baseproject.dto.*;
 import com.baseproject.exception.*;
+import com.baseproject.exception.exceptions.*;
 import com.baseproject.mapper.UserMapper;
 import com.baseproject.model.*;
 import com.baseproject.repository.*;

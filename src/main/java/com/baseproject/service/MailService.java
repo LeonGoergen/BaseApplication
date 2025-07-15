@@ -1,6 +1,7 @@
 package com.baseproject.service;
 
 import com.baseproject.exception.*;
+import com.baseproject.exception.exceptions.ServiceFailedException;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;

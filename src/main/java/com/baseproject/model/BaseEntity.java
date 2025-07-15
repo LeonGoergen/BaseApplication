@@ -35,4 +35,8 @@ public class BaseEntity
   @CreatedBy
   @Column(name = "created_by", updatable = false)
   private String createdBy;
+
+  @LastModifiedBy
+  @Column(name = "updated_by")
+  private String updatedBy;
 }

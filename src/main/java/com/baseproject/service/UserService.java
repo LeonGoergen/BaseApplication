@@ -2,6 +2,7 @@ package com.baseproject.service;
 
 import com.baseproject.dto.*;
 import com.baseproject.exception.*;
+import com.baseproject.exception.exceptions.ValidationException;
 import com.baseproject.mapper.UserMapper;
 import com.baseproject.model.*;
 import com.baseproject.model.enums.UserRoleEnum;
@@ -28,7 +29,8 @@ public class UserService {
 
   private final MailService mailService;
 
-  public User findByEmail(String email) throws ValidationException {
+  public User findByEmail(String email) throws ValidationException
+  {
     return userRepository.findByEmail(email)
         .orElseThrow(() -> new ValidationException(ExceptionEnum.USER_NOT_FOUND)
             .setHttpStatus(HttpStatus.NOT_FOUND)
@@ -104,8 +106,7 @@ public class UserService {
 
   @Transactional
   public void updateLastActiveTime(User user) {
-    user.setLastActiveDateTime(LocalDateTime.now());
-    userRepository.save(user);
+    userRepository.updateLastActiveDateTime(user.getId(), LocalDateTime.now());
   }
 
   @Transactional

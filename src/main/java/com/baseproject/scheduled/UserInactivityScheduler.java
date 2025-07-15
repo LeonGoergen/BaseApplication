@@ -1,6 +1,6 @@
 package com.baseproject.scheduled;
 
-import com.baseproject.exception.BaseException;
+import com.baseproject.exception.exceptions.BaseException;
 import com.baseproject.model.User;
 import com.baseproject.service.*;
 import jakarta.transaction.Transactional;

@@ -2,6 +2,8 @@ package com.baseproject.controller;
 
 import com.baseproject.api.AuthApi;
 import com.baseproject.dto.*;
+import com.baseproject.exception.*;
+import com.baseproject.exception.exceptions.ValidationException;
 import com.baseproject.mapper.UserMapper;
 import com.baseproject.model.User;
 import com.baseproject.service.*;

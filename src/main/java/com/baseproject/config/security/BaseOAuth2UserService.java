@@ -1,6 +1,6 @@
 package com.baseproject.config.security;
 
-import com.baseproject.exception.ValidationException;
+import com.baseproject.exception.exceptions.ValidationException;
 import com.baseproject.model.User;
 import com.baseproject.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -32,8 +32,7 @@ public class BaseOAuth2UserService implements OAuth2UserService<OAuth2UserReques
     User user;
     try {
       user = userService.findByEmail(email);
-      user.setLastActiveDateTime(LocalDateTime.now());
-      user = userService.update(user);
+      userService.updateLastActiveTime(user);
     } catch (ValidationException e) {
       user = userService.create(email, name, "google");
     }
